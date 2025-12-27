@@ -19,6 +19,10 @@ public sealed class FusionProjectionCacheProvider : IProjectionCacheProvider, IP
     }
 
     /// <inheritdoc />
+    /// <remarks>
+    /// The factory must return a non-null value. If T is a nullable reference type and the factory
+    /// could return null, callers should handle this appropriately.
+    /// </remarks>
     public async Task<T> GetOrSetAsync<T>(
         ProjectionCacheKey key,
         Func<Task<T>> factory,
@@ -38,6 +42,8 @@ public sealed class FusionProjectionCacheProvider : IProjectionCacheProvider, IP
             duration,
             tags);
 
+        // The factory is expected to return a non-null value.
+        // FusionCache's GetOrSetAsync will call the factory on cache miss and return the result.
         return result!;
     }
 
